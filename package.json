@@ -21,7 +21,7 @@
     "url": "https://github.com/MnCSD/kafka/issues"
   },
   "homepage": "https://github.com/MnCSD/kafka#readme",
-  "description": "A comprehensive Kafka service library for Node.js with TypeScript support",
+  "description": "A streamlined Kafka service library for Node.js with TypeScript support",
   "keywords": [
     "kafka",
     "kafkajs",
@@ -35,11 +35,9 @@
     "LICENSE"
   ],
   "dependencies": {
-    "events": "^3.3.0",
     "kafkajs": "^2.2.4"
   },
   "devDependencies": {
-    "@types/events": "^3.0.3",
     "@types/node": "^24.0.7",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"

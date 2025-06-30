@@ -2,7 +2,6 @@ import { defaultKafkaConfig } from "./config/kafkaConfig.js";
 import { KafkaAdminService } from "./services/KafkaAdminService.js";
 import { KafkaProducerService } from "./services/KafkaProducerService.js";
 import { KafkaConsumerService } from "./services/KafkaConsumerService.js";
-import { KafkaOutputMonitor } from "./services/KafkaOutputMonitor.js";
 
 export {
   // Configuration
@@ -16,27 +15,18 @@ export {
   KafkaAdminService,
   KafkaProducerService,
   KafkaConsumerService,
-  KafkaOutputMonitor,
 } from "./services/index.js";
-
-export {
-  // Types
-  type FlowOutput,
-  type TopicStats,
-} from "./services/KafkaOutputMonitor.js";
 
 // Main class that combines all services
 export class KafkaService {
   public admin: KafkaAdminService;
   public producer: KafkaProducerService;
   public consumer: KafkaConsumerService;
-  public monitor: KafkaOutputMonitor;
 
   constructor(config = defaultKafkaConfig) {
     this.admin = new KafkaAdminService(config);
     this.producer = new KafkaProducerService(config);
     this.consumer = new KafkaConsumerService(config);
-    this.monitor = new KafkaOutputMonitor(config);
   }
 
   /**
@@ -47,7 +37,6 @@ export class KafkaService {
       this.admin.disconnect(),
       this.producer.disconnect(),
       this.consumer.disconnect(),
-      this.monitor.disconnect(),
     ]);
     console.log("🔌 All Kafka services disconnected");
   }
@@ -65,17 +54,20 @@ async function example() {
     // Send a message
     await kafka.producer.sendMessage("test-topic", { message: "Hello Kafka!" });
 
-    // Start monitoring
-    await kafka.monitor.startMonitoring();
+    // Subscribe to topics
+    await kafka.consumer.subscribe(["test-topic"]);
 
     // Listen for messages
-    kafka.monitor.on("flow-output", (output) => {
-      console.log("Received output:", output);
+    kafka.consumer.on("message", (messageData) => {
+      console.log("Received message:", messageData);
     });
+
+    // Keep running for a bit to receive messages
+    setTimeout(async () => {
+      await kafka.disconnect();
+    }, 5000);
   } catch (error) {
     console.error("Error:", error);
-  } finally {
-    // Clean up
     await kafka.disconnect();
   }
 }
