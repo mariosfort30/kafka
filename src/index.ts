@@ -44,35 +44,65 @@ export class KafkaService {
 
 // Example usage
 async function example() {
+  console.log("🚀 Starting Kafka Services...");
   const kafka = new KafkaService();
 
   try {
+    console.log("📋 Fetching available topics...");
     // Get all topics
     const topics = await kafka.admin.getAllTopics();
-    console.log("Available topics:", topics);
+    console.log("✅ Available topics:", topics);
 
+    console.log("📤 Sending test message...");
     // Send a message
-    await kafka.producer.sendMessage("test-topic", { message: "Hello Kafka!" });
+    await kafka.producer.sendMessage("test-topic", { 
+      message: "Hello Kafka!", 
+      timestamp: new Date().toISOString() 
+    });
+    console.log("✅ Message sent successfully");
 
+    console.log("📥 Setting up consumer...");
     // Subscribe to topics
     await kafka.consumer.subscribe(["test-topic"]);
 
     // Listen for messages
     kafka.consumer.on("message", (messageData) => {
-      console.log("Received message:", messageData);
+      console.log("📨 Received message:", {
+        topic: messageData.topic,
+        value: messageData.value,
+        timestamp: messageData.timestamp
+      });
     });
 
+    kafka.consumer.on("connected", () => {
+      console.log("✅ Consumer connected and listening...");
+    });
+
+    kafka.consumer.on("error", (error) => {
+      console.error("❌ Consumer error:", error);
+    });
+
+    console.log("⏳ Running for 10 seconds to demonstrate...");
     // Keep running for a bit to receive messages
     setTimeout(async () => {
+      console.log("🛑 Shutting down services...");
       await kafka.disconnect();
-    }, 5000);
+      console.log("✅ Example completed successfully");
+      process.exit(0);
+    }, 10000);
+
   } catch (error) {
-    console.error("Error:", error);
+    console.error("❌ Error:", error);
     await kafka.disconnect();
+    process.exit(1);
   }
 }
 
 // Run example if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  example().catch(console.error);
+  console.log("🎯 Running Kafka Services Example");
+  example().catch((error) => {
+    console.error("💥 Fatal error:", error);
+    process.exit(1);
+  });
 }
