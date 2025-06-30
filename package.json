@@ -1,14 +1,15 @@
 {
   "name": "kafkaservices",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "npx tsx watch src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "tsx src/test/testConnection.ts",
-    "monitor": "npx tsx src/examples/monitorFlowOutputs.ts",
-    "debug": "npx tsx src/debug/debugTopics.ts"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -20,14 +21,30 @@
     "url": "https://github.com/MnCSD/kafka/issues"
   },
   "homepage": "https://github.com/MnCSD/kafka#readme",
-  "description": "",
+  "description": "A comprehensive Kafka service library for Node.js with TypeScript support",
+  "keywords": [
+    "kafka",
+    "kafkajs",
+    "messaging",
+    "streaming",
+    "typescript"
+  ],
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "events": "^3.3.0",
-    "kafkajs": "^2.2.4",
-    "loader": "^2.1.1"
+    "kafkajs": "^2.2.4"
   },
   "devDependencies": {
     "@types/events": "^3.0.3",
-    "@types/node": "^24.0.7"
+    "@types/node": "^24.0.7",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
